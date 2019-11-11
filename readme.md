@@ -32,9 +32,9 @@ Dans la version initiale du projet, nous vous mettons à disposition toutes les 
 Le système de compteur est déjà mis en place, mais il faudra s'en servir un peu plus tard, d'abord faire fonctionner le menu.
 
 Il vous faut tout d'abord :
-- [ ] Coder la méthode setupNavigationElements de l'activité principale. Attention au système de cache :)
-- [ ] Remplir la méthode pour afficher le fragment dans le container. 
-- [ ] Maintenant, ça doit marcher. Allez sur la page Favoris, modifiez le compteur et changez le téléphone d'orientation. Vous avez compris la prochaine étape.
+- [x] Coder la méthode setupNavigationElements de l'activité principale. Attention au système de cache :)
+- [x] Remplir la méthode pour afficher le fragment dans le container. 
+- [x] Maintenant, ça doit marcher. Allez sur la page Favoris, modifiez le compteur et changez le téléphone d'orientation. Vous avez compris la prochaine étape.
 - [ ] Pas si simple : l'appli est composée d'une activité qui contient un fragment. Que se passe t-il quand on modifie l'orientation du téléphone ? Quelle méthodes sont ré-appelées ?
 - [ ] Cherchez maintenant comment restaurer l'état d'un fragment et mettez le système en place dans le Fragment favoris.
 - [ ] Il y a sûrement des choses à faire dans l'activité également pour restaurer le fragment, ajoutez le code.
