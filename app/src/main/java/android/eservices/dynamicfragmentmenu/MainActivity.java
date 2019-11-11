@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.navigation.NavigationView;
@@ -28,10 +29,13 @@ public class MainActivity extends AppCompatActivity implements NavigationInterfa
     private SparseArray<Fragment> fragmentArray;
     private Fragment currentFragment;
 
+    final FragmentManager fm = getSupportFragmentManager();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         setupNavigationElements();
 
 
@@ -62,6 +66,14 @@ public class MainActivity extends AppCompatActivity implements NavigationInterfa
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
 
         fragmentArray = new SparseArray<>(3);
+        fragmentArray.append(0,new FavoritesFragment());
+        fragmentArray.append(1,new SelectedFragment());
+
+        currentFragment = fragmentArray.get(1);
+
+        fm.beginTransaction().add(R.id.fragment_container, fragmentArray.get(0), "0").hide(fragmentArray.get(0)).commit();
+        fm.beginTransaction().add(R.id.fragment_container, fragmentArray.get(1), "1").commit();
+
 
         navigationView = findViewById(R.id.navigation);
         navigationView.inflateHeaderView(R.layout.navigation_header);
@@ -69,39 +81,20 @@ public class MainActivity extends AppCompatActivity implements NavigationInterfa
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
-                Fragment fragment = null;
-                String title = getString(R.string.app_name);
-
                 switch (menuItem.getItemId()) {
                     case R.id.favorites:
-                        fragment = new FavoritesFragment();
-                        title  = "Favorites";
+                        replaceFragment(fragmentArray.get(0),"Favorites");
+                        return true;
 
-                        break;
                     case R.id.list:
-                        fragment = new SelectedFragment();
-                        title = "Selection";
-                        break;
+                        replaceFragment(fragmentArray.get(1),"Selection");
+                        return true;
 
                     case R.id.logoff:
                         logoff();
                         break;
 
                 }
-
-                if (fragment != null) {
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.fragment_container, fragment);
-                    ft.commit();
-                }
-
-                // set the toolbar title
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().setTitle(title);
-                }
-
-                DrawerLayout drawer = findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.START);
 
                 //TODO react according to the selected item menu
                 //We need to display the right fragment according to the menu item selection.
@@ -114,14 +107,23 @@ public class MainActivity extends AppCompatActivity implements NavigationInterfa
                 //TODO when we select logoff, I want the Activity to be closed (and so the Application, as it has only one activity)
 
                 //check in the doc what this boolean means and use it the right way ...
-                return true;
+                // 	true to display the item as the selected item
+                return false;
             }
         });
     }
 
 
-    private void replaceFragment(Fragment newFragment) {
+    private void replaceFragment(Fragment newFragment, String title) {
         //TODO replace fragment inside R.id.fragment_container using a FragmentTransaction
+
+        fm.beginTransaction().hide(currentFragment).show(newFragment).commit();
+        currentFragment = newFragment;
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
+        }
+        //lorsqu'on fait closeDrawer, le menu se repli apres selection de l'item
+        drawerLayout.closeDrawer(GravityCompat.START);
     }
 
     private void logoff() {

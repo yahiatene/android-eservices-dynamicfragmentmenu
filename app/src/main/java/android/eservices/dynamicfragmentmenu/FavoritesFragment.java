@@ -21,7 +21,7 @@ public class FavoritesFragment extends Fragment {
     public static final String COUNTER_STATE_KEY = "CounterState";
     private View rootView;
     private NavigationInterface navigationInterface;
-    private Integer currentCounter;
+    private Integer currentCounter=0;
     private Button addButton;
     private Button removeButton;
     private TextView counterTextView;
