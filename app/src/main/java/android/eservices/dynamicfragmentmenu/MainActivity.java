@@ -1,6 +1,8 @@
 package android.eservices.dynamicfragmentmenu;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements NavigationInterfa
     private Fragment currentFragment;
 
     final FragmentManager fm = getSupportFragmentManager();
+    private Fragment mContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,11 @@ public class MainActivity extends AppCompatActivity implements NavigationInterfa
         setContentView(R.layout.activity_main);
 
         setupNavigationElements();
+        if (savedInstanceState != null) {
+            //Restore the fragment's instance
+            mContent = getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_NUMBER_KEY);
+
+        }
 
 
         //TODO Restore instance state
@@ -68,12 +76,6 @@ public class MainActivity extends AppCompatActivity implements NavigationInterfa
         fragmentArray = new SparseArray<>(3);
         fragmentArray.append(0,new FavoritesFragment());
         fragmentArray.append(1,new SelectedFragment());
-
-        currentFragment = fragmentArray.get(1);
-
-        fm.beginTransaction().add(R.id.fragment_container, fragmentArray.get(0), "0").hide(fragmentArray.get(0)).commit();
-        fm.beginTransaction().add(R.id.fragment_container, fragmentArray.get(1), "1").commit();
-
 
         navigationView = findViewById(R.id.navigation);
         navigationView.inflateHeaderView(R.layout.navigation_header);
@@ -117,8 +119,9 @@ public class MainActivity extends AppCompatActivity implements NavigationInterfa
     private void replaceFragment(Fragment newFragment, String title) {
         //TODO replace fragment inside R.id.fragment_container using a FragmentTransaction
 
-        fm.beginTransaction().hide(currentFragment).show(newFragment).commit();
+        fm.beginTransaction().replace(R.id.fragment_container,newFragment).commit();
         currentFragment = newFragment;
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(title);
         }
@@ -142,6 +145,16 @@ public class MainActivity extends AppCompatActivity implements NavigationInterfa
         View counterView = navigationView.getMenu().getItem(1).getActionView();
         counterView.setVisibility(counter > 0 ? View.VISIBLE : View.GONE);
         ((TextView) counterView.findViewById(R.id.counter_view)).setText(counterContent);
+    }
+
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        //Save the fragment's instance
+        getSupportFragmentManager().putFragment(outState, FRAGMENT_NUMBER_KEY, mContent);
     }
 
 

@@ -37,6 +37,7 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.currentCounter=0;
         if (context instanceof NavigationInterface) {
             this.navigationInterface = (NavigationInterface) context;
         }
@@ -55,6 +56,11 @@ public class FavoritesFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         System.out.println("On activity created " + this);
         setupButtons();
+
+        if (savedInstanceState != null) {
+            //Restore the fragment's state here
+            savedInstanceState.get(COUNTER_STATE_KEY);
+        }
 
         //TODO if available, restore the state of the current counter
         //TODO if there is no value to restore, set the counter to default value 4
@@ -95,6 +101,12 @@ public class FavoritesFragment extends Fragment {
         navigationInterface.updateFavoriteCounter(currentCounter);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(COUNTER_STATE_KEY,currentCounter);
+        //Save the fragment's state here
+    }
 
     //TODO save the state of the counter i.e. the current counter number
     //TODO in order to restore it later
