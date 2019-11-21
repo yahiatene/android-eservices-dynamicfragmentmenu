@@ -38,22 +38,20 @@ public class MainActivity extends AppCompatActivity implements NavigationInterfa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setupNavigationElements();
+
         if (savedInstanceState != null) {
-            //Restore the fragment's instance
-            mContent = getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_NUMBER_KEY);
-
+            // TODO : FAIRE LA MEME CHOSE POUR LE COMPTEUR BAS NIVEAU
+            //State had been saved so we need to restore the right fragment
+            //No need to check the menu item because savedInstance restores automatically the view states
+            //We need to store the fragment inside our array so it won't be recreated
+            currentFragment = getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_STORED_KEY);
+            replaceFragment(currentFragment,"titre");
+            fragmentArray.append(savedInstanceState.getInt(FRAGMENT_NUMBER_KEY), currentFragment);
+        } else {
+            //Set default screen to "My Selection", i.e. the first menu element
+            navigationView.setSelectedItem(navigationView.getMenu().getItem(0));
         }
-
-
-        //TODO Restore instance state
-        //If available :
-        //1° - Retrieve the stored fragment from the saved bundle (see SO link in indications below, bottom of the class)
-        //2° - Use the replace fragment to display the retrieved fragment
-        //3° - Add the restored fragment to the cache so it is not recreated when selected the menu item again
-        //If the bundle is null, then display the default fragment using navigationView.setSelectedItem();
-        //Reminder, to get a menu item, use navigationView.getMenu().getItem(idex)
 
         //Let's imagine we retrieve the stored counter state, before creating the favorite Fragment
         //and then be able to update and manage its state.
@@ -150,11 +148,13 @@ public class MainActivity extends AppCompatActivity implements NavigationInterfa
 
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        //we need to save the state of the current selected fragment,
+        //so in case of orientation change, the right fragment will be displayed
+        savedInstanceState.putInt(FRAGMENT_NUMBER_KEY, navigationView.getCheckedItem().getOrder());
+        getSupportFragmentManager().putFragment(savedInstanceState, FRAGMENT_STORED_KEY, currentFragment);
 
-        //Save the fragment's instance
-        getSupportFragmentManager().putFragment(outState, FRAGMENT_NUMBER_KEY, mContent);
     }
 
 
